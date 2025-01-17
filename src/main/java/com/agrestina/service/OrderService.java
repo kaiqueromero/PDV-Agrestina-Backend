@@ -7,8 +7,7 @@ import com.agrestina.domain.order.OrderStatus;
 import com.agrestina.domain.orderedItems.OrderedItem;
 import com.agrestina.domain.product.Product;
 import com.agrestina.domain.user.User;
-import com.agrestina.dto.order.OrderDTO;
-import com.agrestina.dto.order.OrderResponseDTO;
+import com.agrestina.dto.order.ResponseOrderDTO;
 import com.agrestina.dto.order.RegisterOrderDTO;
 import com.agrestina.exeption.ValidationException;
 import com.agrestina.mail.OrderRealizedEmail;
@@ -41,7 +40,7 @@ public class OrderService {
     private OrderRealizedEmail email;
 
     @Transactional
-    public OrderDTO register(RegisterOrderDTO dto, String login) {
+    public ResponseOrderDTO register(RegisterOrderDTO dto, String login) {
 
         User user = userRepository.findUser(login)
                 .orElseThrow(() -> new ValidationException("Usuário autenticado não encontrado!"));
@@ -76,11 +75,8 @@ public class OrderService {
         repository.save(order);
         orderedItemsRepository.saveAll(items);
         email.send(order);
-        return new OrderDTO(order);
-
+        return new ResponseOrderDTO(order);
     }
-
-
 
     private void validateInventory(Inventory inventory, int quantity, Long productId) {
         if (inventory.getQuantity() < quantity) {
@@ -96,27 +92,27 @@ public class OrderService {
         return String.format(key, args);
     }
 
-    public Page<OrderResponseDTO> listOrdersByClientName(Pageable pagination, String clientName) {
-        return repository.findOrdersByClientName(pagination, clientName).map(OrderResponseDTO::new);
+    public Page<ResponseOrderDTO> listOrdersByClientName(Pageable pagination, String clientName) {
+        return repository.findOrdersByClientName(pagination, clientName).map(ResponseOrderDTO::new);
     }
 
-    public Page<OrderResponseDTO> listOrdersByClientId(Pageable pagination, String clientId) {
-        return repository.findOrdersByClientId(pagination, clientId).map(OrderResponseDTO::new);
+    public Page<ResponseOrderDTO> listOrdersByClientId(Pageable pagination, String clientId) {
+        return repository.findOrdersByClientId(pagination, clientId).map(ResponseOrderDTO::new);
     }
 
-    public Page<OrderResponseDTO> listOrdersBySellerName(Pageable pagination, String sellerName) {
-        return repository.findOrdersBySellerName(pagination, sellerName).map(OrderResponseDTO::new);
+    public Page<ResponseOrderDTO> listOrdersBySellerName(Pageable pagination, String sellerName) {
+        return repository.findOrdersBySellerName(pagination, sellerName).map(ResponseOrderDTO::new);
     }
 
-    public Page<OrderResponseDTO> listOrdersBySellerId(Pageable pagination, String sellerId) {
-        return repository.findOrdersBySellerId(pagination, sellerId).map(OrderResponseDTO::new);
+    public Page<ResponseOrderDTO> listOrdersBySellerId(Pageable pagination, String sellerId) {
+        return repository.findOrdersBySellerId(pagination, sellerId).map(ResponseOrderDTO::new);
     }
 
-    public Page<OrderResponseDTO> listAllOrders(Pageable pagination) {
-        return repository.findAllOrders(pagination).map(OrderResponseDTO::new);
+    public Page<ResponseOrderDTO> listAllOrders(Pageable pagination) {
+        return repository.findAllOrders(pagination).map(ResponseOrderDTO::new);
     }
 
-    public Page<OrderResponseDTO> listOrdersByDate(Pageable pagination, LocalDate date) {
-        return repository.findOrderByDate(pagination, date).map(OrderResponseDTO::new);
+    public Page<ResponseOrderDTO> listOrdersByDate(Pageable pagination, LocalDate date) {
+        return repository.findOrderByDate(pagination, date).map(ResponseOrderDTO::new);
     }
 }
