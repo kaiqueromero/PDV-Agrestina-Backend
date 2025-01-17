@@ -1,0 +1,8 @@
+CREATE TABLE inventory(
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    product_id BIGINT NOT NULL,
+    quantity INT NOT NULL DEFAULT 0,
+
+    PRIMARY KEY(id),
+    CONSTRAINT INVENTORY_FK_PRODUCT FOREIGN KEY(product_id) REFERENCES products(id)
+);
