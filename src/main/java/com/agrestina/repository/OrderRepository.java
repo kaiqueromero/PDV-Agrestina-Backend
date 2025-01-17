@@ -54,15 +54,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         """)
     List<SalesStatistics> TotalDailyRevenueByCategory(LocalDate date);
 
-//    @Query("""
-//            SELECT SUM(i.unitPrice * i.quantity)
-//            FROM Order o
-//            JOIN o.items i
-//            WHERE o.date = :date
-//            GROUP BY i.product.name
-//            """)
-//    BigDecimal TotalProductsRevenue(LocalDate date);
-
     @Query("SELECT NEW com.agrestina.dto.statistics.ProductsStatistics(" +
             "prod.name, " +
             "SUM(i.quantity), " +

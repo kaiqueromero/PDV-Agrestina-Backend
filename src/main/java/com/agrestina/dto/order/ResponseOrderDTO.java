@@ -1,8 +1,6 @@
 package com.agrestina.dto.order;
 
 import com.agrestina.domain.order.Order;
-import com.agrestina.dto.payment.ResponsePaymentDTO;
-
 import java.time.LocalDate;
 
 public record ResponseOrderDTO(Long id, LocalDate date, String clientName, String userName, double totalValue, String status) {

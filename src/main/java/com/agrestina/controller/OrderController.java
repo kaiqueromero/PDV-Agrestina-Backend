@@ -2,8 +2,10 @@ package com.agrestina.controller;
 
 
 import com.agrestina.domain.user.User;
+import com.agrestina.dto.order.OrderedItemDTO;
 import com.agrestina.dto.order.ResponseOrderDTO;
 import com.agrestina.dto.order.RegisterOrderDTO;
+import com.agrestina.dto.order.ResponsePendingOrderDTO;
 import com.agrestina.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -28,10 +31,34 @@ public class OrderController {
     private OrderService service;
 
     @PostMapping
-    public ResponseEntity<ResponseOrderDTO> register(@Valid @RequestBody RegisterOrderDTO dto,
-                                                     @AuthenticationPrincipal User user) {
+    public ResponseEntity<ResponsePendingOrderDTO> register(@Valid @RequestBody RegisterOrderDTO dto,
+                                                                     @AuthenticationPrincipal User user) {
         var order = this.service.register(dto, user.getLogin());
         return ResponseEntity.ok(order);
+    }
+
+    @PostMapping("/finalize/{pendingOrderId}")
+    public ResponseEntity<ResponseOrderDTO> finalizeOrder(@PathVariable Long pendingOrderId) {
+        var order = this.service.finalizeOrder(pendingOrderId);
+        return ResponseEntity.ok(order);
+    }
+
+    @PostMapping("/add-items/{pendingOrderId}")
+    public ResponseEntity<Void> addItemsToPendingOrder(@PathVariable Long pendingOrderId, @Valid @RequestBody List<OrderedItemDTO> itemsDto) {
+        this.service.addItemsToPendingOrder(pendingOrderId, itemsDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/remove-items/{pendingOrderId}")
+    public ResponseEntity<Void> removeItemsFromPendingOrder(@PathVariable Long pendingOrderId, @Valid @RequestBody List<OrderedItemDTO> itemsDto) {
+        this.service.removeItemsFromPendingOrder(pendingOrderId, itemsDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/all/pending-orders")
+    public ResponseEntity<Page<ResponsePendingOrderDTO>> ListAllPendingOrders(Pageable pagination){
+        var orders = this.service.listAllPendingOrders(pagination);
+        return ResponseEntity.ok(orders);
     }
 
     @GetMapping("client/id/{Id}")
