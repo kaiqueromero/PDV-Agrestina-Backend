@@ -1,6 +1,7 @@
 package com.agrestina.controller;
 import com.agrestina.dto.statistics.BillingReport;
 import com.agrestina.dto.statistics.InventoryReport;
+import com.agrestina.dto.statistics.ProductReport;
 import com.agrestina.mail.ReportEmail;
 import com.agrestina.service.ReportService;
 import lombok.RequiredArgsConstructor;
@@ -33,16 +34,22 @@ public class ReportController {
         return ResponseEntity.ok(report);
     }
 
-    @GetMapping("/billing/date/{date}")
-    public ResponseEntity<BillingReport> getInfoBilling(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
-        var report = service.revenueObtained(date);
+    @GetMapping("/billing/category/{date}")
+    public ResponseEntity<BillingReport> getInfoBillingByCategory(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+        var report = service.revenueObtainedByCategory(date);
+        return ResponseEntity.ok(report);
+    }
+
+    @GetMapping("/billing/products/{date}")
+    public ResponseEntity<ProductReport> getInfoBillingByProducts(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+        var report = service.revenueObtainedByProduct(date);
         return ResponseEntity.ok(report);
     }
 
     @GetMapping("/email")
     public ResponseEntity<String> sendEmail(){
         var inventory = service.infoInventory();
-        var billing = service.revenueObtained(LocalDate.now());
+        var billing = service.revenueObtainedByCategory(LocalDate.now());
         email.send(inventory, billing);
         return ResponseEntity.ok("Email enviado");
     }

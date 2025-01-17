@@ -3,6 +3,7 @@ package com.agrestina.service;
 import com.agrestina.dto.product.ProductDTO;
 import com.agrestina.dto.statistics.BillingReport;
 import com.agrestina.dto.statistics.InventoryReport;
+import com.agrestina.dto.statistics.ProductReport;
 import com.agrestina.repository.InventoryRepository;
 import com.agrestina.repository.OrderRepository;
 import com.agrestina.repository.ProductRepository;
@@ -31,11 +32,19 @@ public class ReportService {
         return new InventoryReport(outOfStockProduct);
     }
 
-    public BillingReport revenueObtained(LocalDate date){
+    public BillingReport revenueObtainedByCategory(LocalDate date){
         var totalRevenue = orderRepository.TotalDailyRevenue(date);
 
         var statistics = orderRepository.TotalDailyRevenueByCategory(date);
 
         return new BillingReport(totalRevenue, statistics);
+    }
+
+    public ProductReport revenueObtainedByProduct(LocalDate date){
+        var totalRevenue = orderRepository.TotalDailyRevenue(date);
+
+        var statistics = orderRepository.TotalDailyRevenueByProducts(date);
+
+        return new ProductReport(totalRevenue, statistics);
     }
 }
