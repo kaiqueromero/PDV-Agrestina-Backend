@@ -6,6 +6,7 @@ import com.agrestina.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ public class PendingOrder {
     private OrderStatus status = OrderStatus.EM_ANDAMENTO;
 
     @Column(name = "total_value")
-    private double totalValue;
+    private BigDecimal totalValue;
 
     @Builder
     public PendingOrder(List<PendingOrderedItem> items, User user, Client client) {
@@ -57,12 +58,12 @@ public class PendingOrder {
     public void addItem(PendingOrderedItem item) {
         this.items.add(item);
         item.setPendingOrder(this);
-        this.totalValue += item.getTotal();
+        this.totalValue = this.totalValue.add(item.getTotal());
     }
 
     public void removeItem(PendingOrderedItem item) {
         this.items.remove(item);
         item.setPendingOrder(null);
-        this.totalValue -= item.getTotal();
+        this.totalValue = this.totalValue.subtract(item.getTotal());
     }
 }

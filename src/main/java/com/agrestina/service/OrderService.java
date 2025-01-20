@@ -9,6 +9,7 @@ import com.agrestina.domain.orderedItems.OrderedItem;
 import com.agrestina.domain.orderedItems.PendingOrderedItem;
 import com.agrestina.domain.product.Product;
 import com.agrestina.domain.user.User;
+import com.agrestina.dto.inventory.UpdateInventoryDTO;
 import com.agrestina.dto.order.OrderedItemDTO;
 import com.agrestina.dto.order.RegisterOrderDTO;
 import com.agrestina.dto.order.ResponseOrderDTO;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,9 +44,7 @@ public class OrderService {
     @Autowired
     private PendingOrderedItemsRepository pendingOrderedItemsRepository;
     @Autowired
-    private OrderedItemsRepository orderedItemsRepository;
-    @Autowired
-    private OrderRealizedEmail email;
+    private InventoryService inventoryService;
     @Autowired
     private PendingOrderRepository pendingOrderRepository;
 
@@ -72,7 +72,9 @@ public class OrderService {
                 })
                 .collect(Collectors.toList());
 
-        var total = items.stream().mapToDouble(PendingOrderedItem::getTotal).sum();
+        var total = items.stream()
+                .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         pendingOrder.setDate(LocalDate.now());
         pendingOrder.setItems(items);
@@ -128,6 +130,7 @@ public class OrderService {
         pendingOrderedItemsRepository.saveAll(items);
     }
 
+
     @Transactional
     public void removeItemsFromPendingOrder(Long pendingOrderId, List<OrderedItemDTO> itemsDto) {
         PendingOrder pendingOrder = pendingOrderRepository.findById(pendingOrderId)
@@ -136,6 +139,9 @@ public class OrderService {
         itemsDto.forEach(itemDto -> {
             PendingOrderedItem item = pendingOrderedItemsRepository.findById(itemDto.productId())
                     .orElseThrow(() -> new RuntimeException("Item not found"));
+
+            BigDecimal itemTotalValue = item.getProduct().getPrice().multiply(BigDecimal.valueOf(itemDto.quantity()));
+
             if (item.getQuantity() > itemDto.quantity()) {
                 item.setQuantity(item.getQuantity() - itemDto.quantity());
                 pendingOrderedItemsRepository.save(item);
@@ -143,6 +149,9 @@ public class OrderService {
                 pendingOrder.removeItem(item);
                 pendingOrderedItemsRepository.delete(item);
             }
+
+            inventoryService.updateInventory(new UpdateInventoryDTO(item.getProduct().getId(), itemDto.quantity()));
+            pendingOrder.setTotalValue(pendingOrder.getTotalValue().subtract(itemTotalValue));
         });
 
         pendingOrderRepository.save(pendingOrder);

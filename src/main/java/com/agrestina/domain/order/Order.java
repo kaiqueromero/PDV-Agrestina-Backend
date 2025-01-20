@@ -7,6 +7,7 @@ import com.agrestina.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class Order {
     private List<Payment> payments = new ArrayList<>();
 
     @Column(name = "total_value")
-    private double totalValue;
+    private BigDecimal totalValue;
 
     @Builder
     public Order(List<OrderedItem> items, User user, Client client) {

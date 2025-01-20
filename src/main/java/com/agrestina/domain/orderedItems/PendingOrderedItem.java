@@ -33,8 +33,8 @@ public class PendingOrderedItem {
     @Column(name = "unit_price")
     private BigDecimal unitPrice;
 
-    public double getTotal() {
-        return unitPrice.doubleValue() * quantity;
+    public BigDecimal getTotal() {
+        return unitPrice.multiply(new BigDecimal(quantity));
     }
 
     public PendingOrderedItem(PendingOrder pendingOrder, Product product, Integer quantity) {
