@@ -1,8 +1,6 @@
 package com.agrestina.dto.order;
 
-import com.agrestina.domain.order.Order;
 import com.agrestina.domain.order.PendingOrder;
-import com.agrestina.repository.PendingOrderRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -16,6 +16,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o WHERE o.date = :date")
     Page<Order> findOrderByDate(Pageable pageable, LocalDate date);
 
+    @Query("SELECT o FROM Order o WHERE o.id = :id")
+    Page<Order> findOrderById(Pageable pageable, Long id);
+
     @Query("SELECT o FROM Order o WHERE o.client.name = :clientName")
     Page<Order> findOrdersByClientName(Pageable pageable, String clientName);
 
