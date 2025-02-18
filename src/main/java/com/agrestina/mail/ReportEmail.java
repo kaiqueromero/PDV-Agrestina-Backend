@@ -2,6 +2,7 @@ package com.agrestina.mail;
 
 import com.agrestina.dto.statistics.BillingReport;
 import com.agrestina.dto.statistics.InventoryReport;
+import com.agrestina.dto.statistics.ProductReport;
 import com.agrestina.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,7 @@ public class ReportEmail {
     @Autowired
     private EmailService sender;
 
-    public void send(InventoryReport inventory, BillingReport billing) {
+    public void send(InventoryReport inventory, ProductReport billing) {
         String emailContent = """
                 Olá!
                 
@@ -23,8 +24,8 @@ public class ReportEmail {
                 .reduce("", (partialString, element) -> partialString + element) +
                 "\n\n\nFaturamento do dia: " + billing.totalRevenue() +
                 "\n\nEstatísticas: " + billing.statistics().stream()
-                .map(stat -> "\nCategoria: " + stat.category() +
-                        "\nQuantidade Vendida: " + stat.quantitySale() +
+                .map(stat -> "\nProduto: " + stat.name() +
+                        "\nQuantidade Vendida: " + stat.quantity() +
                         "\nFaturamento: " + stat.revenue())
                 .reduce("", (partialString, element) -> partialString + element);
 

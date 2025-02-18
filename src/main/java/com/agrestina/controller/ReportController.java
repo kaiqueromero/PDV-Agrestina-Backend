@@ -49,7 +49,7 @@ public class ReportController {
     @GetMapping("/email")
     public ResponseEntity<String> sendEmail(){
         var inventory = service.infoInventory();
-        var billing = service.revenueObtainedByCategory(LocalDate.now());
+        var billing = service.revenueObtainedByProduct(LocalDate.now());
         email.send(inventory, billing);
         return ResponseEntity.ok("Email enviado");
     }

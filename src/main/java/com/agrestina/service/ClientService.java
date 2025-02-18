@@ -4,6 +4,8 @@ import com.agrestina.domain.client.Client;
 import com.agrestina.dto.client.ClientRequestDTO;
 import com.agrestina.dto.client.ClientResponseDTO;
 import com.agrestina.repository.ClientRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,11 +15,14 @@ import java.util.Optional;
 
 @Service
 public class ClientService {
+    private static final Logger logger = LoggerFactory.getLogger(ClientService.class);
+
 
     @Autowired
     private ClientRepository clientRepository;
 
     public ClientResponseDTO register(ClientRequestDTO dto) {
+        logger.info("Registering new client: {}", dto.name());
         Optional<Client> client = this.clientRepository.findByName(dto.name());
 
         if (client.isEmpty()) {
@@ -29,11 +34,12 @@ public class ClientService {
             newClient.setTelephone(dto.telephone());
             newClient.setEmail(dto.email());
             newClient.setActive(true);
-
             clientRepository.save(newClient);
+            logger.info("Client registered successfully: {}", newClient.getName());
 
             return ResponseEntity.ok(new ClientResponseDTO(newClient)).getBody();
         } else {
+            logger.warn("Client already registered: {}", dto.name());
             throw new RuntimeException("Client already registered");
         }
     }
