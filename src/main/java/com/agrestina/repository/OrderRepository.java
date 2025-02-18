@@ -42,29 +42,38 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             """)
    BigDecimal TotalDailyRevenue(LocalDate date);
 
+    @Query("""
+            SELECT SUM(i.unitPrice * i.quantity)
+            FROM Order o 
+            JOIN o.items i 
+            WHERE o.date BETWEEN :startDate AND :endDate
+            """)
+    BigDecimal TotalRevenue(LocalDate startDate, LocalDate endDate);
+
 
     @Query("""
         SELECT NEW com.agrestina.dto.statistics.SalesStatistics(
             prod.category,
             SUM(i.quantity),
-            SUM(i.unitPrice * i.quantity)
-        )
+            SUM(i.unitPrice * i.quantity))
         FROM Order o
         JOIN o.items i
         JOIN i.product prod
-        WHERE o.date = :date
+        WHERE o.date BETWEEN :startDate AND :endDate
         GROUP BY prod.category
         """)
-    List<SalesStatistics> TotalDailyRevenueByCategory(LocalDate date);
+    List<SalesStatistics> TotalDailyRevenueByCategory(LocalDate startDate, LocalDate endDate);
 
-    @Query("SELECT NEW com.agrestina.dto.statistics.ProductsStatistics(" +
-            "prod.name, " +
-            "SUM(i.quantity), " +
-            "SUM(i.unitPrice * i.quantity)) " +
-            "FROM Order o " +
-            "JOIN o.items i " +
-            "JOIN i.product prod " +
-            "WHERE o.date = :date " +
-            "GROUP BY prod.name")
-    List<ProductsStatistics> TotalDailyRevenueByProducts(LocalDate date);
+    @Query(""" 
+            SELECT NEW com.agrestina.dto.statistics.ProductsStatistics(
+            prod.name,
+            SUM(i.quantity),
+            SUM(i.unitPrice * i.quantity))
+            FROM Order o 
+            JOIN o.items i 
+            JOIN i.product prod 
+            WHERE o.date BETWEEN :startDate AND :endDate
+            GROUP BY prod.name
+            """)
+    List<ProductsStatistics> TotalDailyRevenueByProducts(LocalDate startDate, LocalDate endDate);
 }
