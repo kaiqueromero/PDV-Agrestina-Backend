@@ -1,6 +1,5 @@
 package com.agrestina.controller;
 
-import com.agrestina.domain.order.Order;
 import com.agrestina.dto.client.ClientRequestDTO;
 import com.agrestina.dto.client.ClientResponseDTO;
 import com.agrestina.service.ClientService;
@@ -12,8 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @Slf4j
