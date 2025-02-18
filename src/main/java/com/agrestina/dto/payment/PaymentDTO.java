@@ -12,6 +12,4 @@ public record PaymentDTO(PaymentMethod method, LocalDate paymentDate, String rec
     public PaymentDTO(Payment payment) {
         this(payment.getMethod(), payment.getPaymentDate(), payment.getReceipt());
     }
-
-
 }

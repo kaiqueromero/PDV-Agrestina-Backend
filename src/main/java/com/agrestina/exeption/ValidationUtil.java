@@ -1,5 +1,11 @@
 package com.agrestina.exeption;
 
+import com.agrestina.domain.orderedItems.OrderedItem;
+import com.agrestina.dto.order.OrderedItemDTO;
+
+import java.math.BigDecimal;
+import java.util.List;
+
 public class ValidationUtil {
 
     public static void validateNotNullOrBlank(String value, String fieldName) {
@@ -14,9 +20,23 @@ public class ValidationUtil {
         }
     }
 
-    public static void validatePositive(Integer value, String fieldName) {
-        if (value == null || value <= 0) {
+    public static void validatePositive(BigDecimal value, String fieldName) {
+        if (value == null || value.equals(BigDecimal.ZERO) || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new ValidationException(String.format("O campo %s deve ser maior que zero", fieldName));
         }
+    }
+
+    public static void validateMin(Integer value, String fieldName) {
+        if (value == null || value < 1 ) {
+            throw new ValidationException(String.format("O campo %s deve ser maior que zero", fieldName));
+        }
+    }
+
+    public static void validateList(List<OrderedItemDTO> list, String fieldName) {
+        list.forEach(item -> {
+            if (item.quantity() <= 0) {
+                throw new ValidationException(String.format("O campo %s deve ser maior que zero", fieldName));
+            }
+        });
     }
 }
