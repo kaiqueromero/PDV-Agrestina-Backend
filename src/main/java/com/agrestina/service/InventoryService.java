@@ -16,13 +16,18 @@ public class InventoryService {
     @Autowired
     private InventoryRepository repository;
 
-    public List<InventoryDTO> list(){
+    public List<InventoryDTO> listActives(){
         return repository.findActiveInventories()
                 .stream().map(InventoryDTO::new).collect(Collectors.toList());
     }
 
-    public List<InventoryDTO> listAll(){
+    public List<InventoryDTO> listInactives(){
         return repository.findInactiveInventories()
+                .stream().map(InventoryDTO::new).collect(Collectors.toList());
+    }
+
+    public List<InventoryDTO> listAll(){
+        return repository.findAll()
                 .stream().map(InventoryDTO::new).collect(Collectors.toList());
     }
 

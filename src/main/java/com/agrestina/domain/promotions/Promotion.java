@@ -27,5 +27,11 @@ import java.time.LocalDate;
         private LocalDate endDate;
         private boolean active;
 
+
+        public void disabled(){
+            this.active = false;
+        }
+
+        public void activate(){this.active = true;}
     }
 

@@ -3,6 +3,8 @@ package com.agrestina.service;
 import com.agrestina.domain.promotions.Promotion;
 import com.agrestina.repository.PromotionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,8 +15,8 @@ import java.util.List;
         @Autowired
         private PromotionRepository promotionRepository;
 
-        public List<Promotion> getAllPromotions() {
-            return promotionRepository.findAll();
+        public Page<Promotion> getAllPromotions(Pageable pagination) {
+            return promotionRepository.findAllPromotions(pagination);
         }
 
         public Promotion getPromotionById(Long id) {
@@ -36,8 +38,9 @@ import java.util.List;
             return promotionRepository.save(promotion);
         }
 
-        public void deletePromotion(Long id) {
-            Promotion promotion = getPromotionById(id);
-            promotionRepository.delete(promotion);
+        public Promotion deletePromotion(Long id) {
+            var promotion = promotionRepository.findById(id).get();
+            promotion.disabled();
+            return promotion;
         }
 }
